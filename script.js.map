@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crude Oil Tactical Yield Calculator</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="calculator-container">
+      <header class="calc-header">
+        <div class="badge">
+          <i class="fa-solid fa-oil-well"></i>
+          Crude Oil Yield Terminal
+        </div>
+        <h1>Tactical Investment Calculator</h1>
+        <p>
+          Project your daily cash flow and target returns based on physical
+          barrel leverage and daily market movement.
+        </p>
+      </header>
+
+      <div class="calc-grid">
+        <!-- Input Panel -->
+        <div class="panel input-panel">
+          <div class="panel-header">
+            <h2>
+              <i class="fa-solid fa-sliders"></i>
+              Tactical Parameters
+            </h2>
+          </div>
+
+          <!-- 1. Investment Amount -->
+          <div class="control-group">
+            <div class="control-label">
+              <label for="investment">Capital Investment</label>
+              <span class="value-display" id="inv-display">$50,000</span>
+            </div>
+            <input
+              type="range"
+              id="investment"
+              min="1000"
+              max="1000000"
+              step="1000"
+              value="50000"
+            />
+            <div class="range-bounds">
+              <span>$1,000</span>
+              <span>$1,000,000</span>
+            </div>
+          </div>
+
+          <!-- 2. Benchmark Oil Price -->
+          <div class="control-group">
+            <div class="control-label">
+              <label for="oilPrice">Benchmark Oil Price ($/bbl)</label>
+              <span class="value-display" id="price-display">$85</span>
+            </div>
+            <input
+              type="range"
+              id="oilPrice"
+              min="80"
+              max="120"
+              step="1"
+              value="85"
+            />
+            <div class="range-bounds">
+              <span>$80/bbl</span>
+              <span>$120/bbl</span>
+            </div>
+          </div>
+
+          <!-- 3. Daily Price Swing -->
+          <div class="control-group">
+            <div class="control-label">
+              <label for="dailySwing">Daily Market Swing ($/bbl)</label>
+              <span class="value-display" id="swing-display">$1.50</span>
+            </div>
+            <input
+              type="range"
+              id="dailySwing"
+              min="0.25"
+              max="5.00"
+              step="0.25"
+              value="1.50"
+            />
+            <div class="range-bounds">
+              <span>$0.25</span>
+              <span>$5.00</span>
+            </div>
+          </div>
+
+          <!-- 4. Target ROI -->
+          <div class="control-group">
+            <div class="control-label">
+              <label for="targetRoi">Target ROI (%)</label>
+              <span class="value-display accent" id="roi-display">100%</span>
+            </div>
+            <input
+              type="range"
+              id="targetRoi"
+              min="10"
+              max="1000"
+              step="10"
+              value="100"
+            />
+            <div class="range-bounds">
+              <span>10%</span>
+              <span>1,000%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Output / Results Panel -->
+        <div class="panel output-panel">
+          <div class="panel-header">
+            <h2>
+              <i class="fa-solid fa-chart-line"></i>
+              Projected Returns
+            </h2>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card highlight">
+              <div class="kpi-icon"><i class="fa-solid fa-wallet"></i></div>
+              <div class="kpi-info">
+                <span class="kpi-title">Daily Cash Flow</span>
+                <span class="kpi-value" id="daily-earnings">$882</span>
+                <span class="kpi-sub">Based on market movement</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-barrel-oil"></i></div>
+              <div class="kpi-info">
+                <span class="kpi-title">Barrels Controlled</span>
+                <span class="kpi-value" id="barrels-count">588 bbl</span>
+                <span class="kpi-sub">Physical volume allocation</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-bullseye"></i></div>
+              <div class="kpi-info">
+                <span class="kpi-title">Target Profit Amount</span>
+                <span class="kpi-value" id="target-profit">$50,000</span>
+                <span class="kpi-sub" id="total-payout-sub">
+                  Total payout: $100,000
+                </span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </div>
+              <div class="kpi-info">
+                <span class="kpi-title">Est. Days to Target ROI</span>
+                <span class="kpi-value" id="days-needed">57 days</span>
+                <span class="kpi-sub">Trading session projection</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategy Summary Callout -->
+          <div class="strategy-box">
+            <i class="fa-solid fa-circle-info"></i>
+            <p id="strategy-desc">
+              With an investment of
+              <strong>$50,000</strong>
+              at
+              <strong>$85/bbl</strong>
+              , you control
+              <strong>588 barrels</strong>
+              . A
+              <strong>$1.50</strong>
+              daily movement yields
+              <strong>$882/day</strong>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

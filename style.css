@@ -1,0 +1,71 @@
+// Formatting helpers
+const formatCurrency = (num) =>
+new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0
+}).format(num);
+
+const formatNumber = (num) =>
+new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(num);
+
+// DOM Elements
+const investmentInput = document.getElementById("investment");
+const oilPriceInput = document.getElementById("oilPrice");
+const dailySwingInput = document.getElementById("dailySwing");
+const targetRoiInput = document.getElementById("targetRoi");
+
+const invDisplay = document.getElementById("inv-display");
+const priceDisplay = document.getElementById("price-display");
+const swingDisplay = document.getElementById("swing-display");
+const roiDisplay = document.getElementById("roi-display");
+
+const dailyEarningsEl = document.getElementById("daily-earnings");
+const barrelsCountEl = document.getElementById("barrels-count");
+const targetProfitEl = document.getElementById("target-profit");
+const daysNeededEl = document.getElementById("days-needed");
+const totalPayoutSub = document.getElementById("total-payout-sub");
+const strategyDesc = document.getElementById("strategy-desc");
+
+function updateCalculator() {
+  const investment = parseFloat(investmentInput.value);
+  const oilPrice = parseFloat(oilPriceInput.value);
+  const dailySwing = parseFloat(dailySwingInput.value);
+  const targetRoi = parseFloat(targetRoiInput.value);
+
+  // Displays
+  invDisplay.textContent = formatCurrency(investment);
+  priceDisplay.textContent = `$${oilPrice}`;
+  swingDisplay.textContent = `$${dailySwing.toFixed(2)}`;
+  roiDisplay.textContent = `${targetRoi}%`;
+
+  // Dynamic Calculations
+  const barrels = investment / oilPrice;
+  const dailyEarnings = barrels * dailySwing;
+  const targetProfit = investment * (targetRoi / 100);
+  const totalPayout = investment + targetProfit;
+  const daysNeeded = Math.ceil(targetProfit / dailyEarnings);
+
+  // Update Outputs
+  barrelsCountEl.textContent = `${formatNumber(barrels)} bbl`;
+  dailyEarningsEl.textContent = formatCurrency(dailyEarnings);
+  targetProfitEl.textContent = formatCurrency(targetProfit);
+  totalPayoutSub.textContent = `Total payout: ${formatCurrency(totalPayout)}`;
+  daysNeededEl.textContent = `${formatNumber(daysNeeded)} days`;
+
+  // Strategy explanation text
+  strategyDesc.innerHTML = `
+    With an investment of <strong>${formatCurrency(investment)}</strong> at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
+    A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong>.
+  `;
+}
+
+// Add Event Listeners
+[investmentInput, oilPriceInput, dailySwingInput, targetRoiInput].forEach(
+  (input) => {
+    input.addEventListener("input", updateCalculator);
+  }
+);
+
+// Initial Run
+updateCalculator();
