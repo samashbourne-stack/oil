@@ -1,215 +1,390 @@
-:root {
-  --bg-color: #0b0f17;
-  --panel-bg: #131b2a;
-  --card-bg: #1a2436;
-  --accent-gold: #f59e0b;
-  --accent-green: #10b981;
-  --text-main: #f3f4f6;
-  --text-muted: #9ca3af;
-  --border-color: #26334d;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crude Oil Tactical Yield Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <style>
+    :root {
+      --bg-color: #0b0f17;
+      --panel-bg: #131b2a;
+      --card-bg: #1a2436;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: #26334d;
+    }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Inter", sans-serif;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
 
-body {
-  background-color: var(--bg-color);
-  color: var(--text-main);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-}
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-.calculator-container {
-  max-width: 1100px;
-  width: 100%;
-}
+    .calculator-container {
+      max-width: 1100px;
+      width: 100%;
+    }
 
-.calc-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
+    .calc-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--accent-gold);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  margin-bottom: 12px;
-}
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-gold);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      margin-bottom: 12px;
+    }
 
-.calc-header h1 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
+    .calc-header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
 
-.calc-header p {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-}
+    .calc-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
 
-.calc-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
 
-@media (max-width: 850px) {
-  .calc-grid {
-    grid-template-columns: 1fr;
-  }
-}
+    @media (max-width: 850px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
-.panel {
-  background-color: var(--panel-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 28px;
-}
+    .panel {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 28px;
+    }
 
-.panel-header h2 {
-  font-size: 1.2rem;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text-main);
-}
+    .panel-header h2 {
+      font-size: 1.2rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+    }
 
-.control-group {
-  margin-bottom: 22px;
-}
+    .control-group {
+      margin-bottom: 22px;
+    }
 
-.control-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
 
-.control-label label {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
+    .control-label label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
 
-.value-display {
-  font-weight: 700;
-  color: #ffffff;
-  font-size: 1rem;
-}
+    .value-display {
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 1rem;
+    }
 
-.value-display.accent {
-  color: var(--accent-gold);
-}
+    .value-display.accent {
+      color: var(--accent-gold);
+    }
 
-input[type="range"] {
-  width: 100%;
-  height: 6px;
-  border-radius: 5px;
-  background: var(--border-color);
-  outline: none;
-  accent-color: var(--accent-gold);
-  cursor: pointer;
-}
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: var(--border-color);
+      outline: none;
+      accent-color: var(--accent-gold);
+      cursor: pointer;
+    }
 
-.range-bounds {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
+    .range-bounds {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
 
-.kpi-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
-}
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
 
-.kpi-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  padding: 18px;
-  border-radius: 12px;
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
 
-.kpi-card.highlight {
-  border-color: rgba(16, 185, 129, 0.4);
-  background: linear-gradient(
-    135deg,
-    var(--card-bg) 0%,
-    rgba(16, 185, 129, 0.08) 100%
-  );
-}
+    .kpi-card.highlight {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(16, 185, 129, 0.08) 100%);
+    }
 
-.kpi-card.highlight .kpi-value {
-  color: var(--accent-green);
-}
+    .kpi-card.highlight .kpi-value {
+      color: var(--accent-green);
+    }
 
-.kpi-icon {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 10px;
-  border-radius: 8px;
-  color: var(--accent-gold);
-  font-size: 1.1rem;
-}
+    .kpi-icon {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      border-radius: 8px;
+      color: var(--accent-gold);
+      font-size: 1.1rem;
+    }
 
-.kpi-info {
-  display: flex;
-  flex-direction: column;
-}
+    .kpi-info {
+      display: flex;
+      flex-direction: column;
+    }
 
-.kpi-title {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
+    .kpi-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
 
-.kpi-value {
-  font-size: 1.3rem;
-  font-weight: 700;
-}
+    .kpi-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
 
-.kpi-sub {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
+    .kpi-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
 
-.strategy-box {
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
+    .strategy-box {
+      background: rgba(245, 158, 11, 0.05);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
 
-.strategy-box i {
-  color: var(--accent-gold);
-  margin-top: 3px;
-}
+    .strategy-box i {
+      color: var(--accent-gold);
+      margin-top: 3px;
+    }
 
-.strategy-box p {
-  font-size: 0.88rem;
-  line-height: 1.4;
-  color: var(--text-main);
-}
+    .strategy-box p {
+      font-size: 0.88rem;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <header class="calc-header">
+      <div class="badge"><i class="fa-solid fa-oil-well"></i> Crude Oil Yield Terminal</div>
+      <h1>Tactical Investment Calculator</h1>
+      <p>Project your daily cash flow and target returns based on physical barrel leverage and daily market movement.</p>
+    </header>
+
+    <div class="calc-grid">
+      <div class="panel input-panel">
+        <div class="panel-header">
+          <h2><i class="fa-solid fa-sliders"></i> Tactical Parameters</h2>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="investment">Capital Investment</label>
+            <span class="value-display" id="inv-display">$50,000</span>
+          </div>
+          <input type="range" id="investment" min="1000" max="1000000" step="1000" value="50000" />
+          <div class="range-bounds"><span>$1,000</span><span>$1,000,000</span></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="oilPrice">Benchmark Oil Price ($/bbl)</label>
+            <span class="value-display" id="price-display">$85</span>
+          </div>
+          <input type="range" id="oilPrice" min="80" max="120" step="1" value="85" />
+          <div class="range-bounds"><span>$80/bbl</span><span>$120/bbl</span></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="dailySwing">Daily Market Swing ($/bbl)</label>
+            <span class="value-display" id="swing-display">$1.50</span>
+          </div>
+          <input type="range" id="dailySwing" min="0.25" max="5.00" step="0.25" value="1.50" />
+          <div class="range-bounds"><span>$0.25</span><span>$5.00</span></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="targetRoi">Target ROI (%)</label>
+            <span class="value-display accent" id="roi-display">100%</span>
+          </div>
+          <input type="range" id="targetRoi" min="10" max="1000" step="10" value="100" />
+          <div class="range-bounds"><span>10%</span><span>1,000%</span></div>
+        </div>
+      </div>
+
+      <div class="panel output-panel">
+        <div class="panel-header">
+          <h2><i class="fa-solid fa-chart-line"></i> Projected Returns</h2>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card highlight">
+            <div class="kpi-icon"><i class="fa-solid fa-wallet"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-title">Daily Cash Flow</span>
+              <span class="kpi-value" id="daily-earnings">$882</span>
+              <span class="kpi-sub">Based on market movement</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-barrel-oil"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-title">Barrels Controlled</span>
+              <span class="kpi-value" id="barrels-count">588 bbl</span>
+              <span class="kpi-sub">Physical volume allocation</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-bullseye"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-title">Target Profit Amount</span>
+              <span class="kpi-value" id="target-profit">$50,000</span>
+              <span class="kpi-sub" id="total-payout-sub">Total payout: $100,000</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-title">Est. Days to Target ROI</span>
+              <span class="kpi-value" id="days-needed">57 days</span>
+              <span class="kpi-sub">Trading session projection</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="strategy-box">
+          <i class="fa-solid fa-circle-info"></i>
+          <p id="strategy-desc">
+            With an investment of <strong>$50,000</strong> at <strong>$85/bbl</strong>, you control <strong>588 barrels</strong>. A <strong>$1.50</strong> daily movement yields <strong>$882/day</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const formatCurrency = (num) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
+
+    const formatNumber = (num) =>
+      new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(num);
+
+    const investmentInput = document.getElementById('investment');
+    const oilPriceInput = document.getElementById('oilPrice');
+    const dailySwingInput = document.getElementById('dailySwing');
+    const targetRoiInput = document.getElementById('targetRoi');
+
+    const invDisplay = document.getElementById('inv-display');
+    const priceDisplay = document.getElementById('price-display');
+    const swingDisplay = document.getElementById('swing-display');
+    const roiDisplay = document.getElementById('roi-display');
+
+    const dailyEarningsEl = document.getElementById('daily-earnings');
+    const barrelsCountEl = document.getElementById('barrels-count');
+    const targetProfitEl = document.getElementById('target-profit');
+    const daysNeededEl = document.getElementById('days-needed');
+    const totalPayoutSub = document.getElementById('total-payout-sub');
+    const strategyDesc = document.getElementById('strategy-desc');
+
+    function updateCalculator() {
+      const investment = parseFloat(investmentInput.value);
+      const oilPrice = parseFloat(oilPriceInput.value);
+      const dailySwing = parseFloat(dailySwingInput.value);
+      const targetRoi = parseFloat(targetRoiInput.value);
+
+      invDisplay.textContent = formatCurrency(investment);
+      priceDisplay.textContent = `$${oilPrice}`;
+      swingDisplay.textContent = `$${dailySwing.toFixed(2)}`;
+      roiDisplay.textContent = `${targetRoi}%`;
+
+      const barrels = investment / oilPrice;
+      const dailyEarnings = barrels * dailySwing;
+      const targetProfit = investment * (targetRoi / 100);
+      const totalPayout = investment + targetProfit;
+      const daysNeeded = Math.ceil(targetProfit / dailyEarnings);
+
+      barrelsCountEl.textContent = `${formatNumber(barrels)} bbl`;
+      dailyEarningsEl.textContent = formatCurrency(dailyEarnings);
+      targetProfitEl.textContent = formatCurrency(targetProfit);
+      totalPayoutSub.textContent = `Total payout: ${formatCurrency(totalPayout)}`;
+      daysNeededEl.textContent = `${formatNumber(daysNeeded)} days`;
+
+      strategyDesc.innerHTML = `
+        With an investment of <strong>${formatCurrency(investment)}</strong> at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
+        A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong>.
+      `;
+    }
+
+    [investmentInput, oilPriceInput, dailySwingInput, targetRoiInput].forEach((input) => {
+      input.addEventListener('input', updateCalculator);
+      input.addEventListener('change', updateCalculator);
+    });
+
+    window.addEventListener('DOMContentLoaded', updateCalculator);
+    updateCalculator();
+  </script>
+</body>
+</html>
