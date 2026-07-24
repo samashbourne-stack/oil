@@ -15,6 +15,7 @@
       --accent-gold: #f59e0b;
       --accent-green: #10b981;
       --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
       --border-color: #26334d;
@@ -122,6 +123,12 @@
     }
     .kpi-card.highlight-blue .kpi-value { color: var(--accent-blue); }
 
+    .kpi-card.highlight-purple {
+      border-color: rgba(139, 92, 246, 0.4);
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(139, 92, 246, 0.08) 100%);
+    }
+    .kpi-card.highlight-purple .kpi-value { color: var(--accent-purple); }
+
     .kpi-icon {
       background: rgba(255, 255, 255, 0.05);
       padding: 10px;
@@ -175,7 +182,7 @@
 
         <div class="control-group">
           <div class="control-label">
-            <label for="investment">Capital Investment</label>
+            <label for="investment">Position Allocation Value</label>
             <span class="value-display" id="inv-display">$288,000</span>
           </div>
           <input type="range" id="investment" min="10000" max="1000000" step="5000" value="288000" />
@@ -203,17 +210,26 @@
 
       <div class="panel output-panel">
         <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
-          <h2><i class="fa-solid fa-chart-line"></i> Yield Projections</h2>
+          <h2><i class="fa-solid fa-chart-line"></i> Yield & Margin Requirements</h2>
           <span class="tier-badge tier-vip" id="tier-badge-display">Institutional Volume</span>
         </div>
 
         <div class="kpi-grid">
+          <div class="kpi-card highlight-purple">
+            <div class="kpi-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-title">Required Account Balance</span>
+              <span class="kpi-value" id="required-balance-display">$576,000</span>
+              <span class="kpi-sub" id="required-balance-sub">Position ($288k) + 100% Margin Buffer ($288k)</span>
+            </div>
+          </div>
+
           <div class="kpi-card highlight-blue">
             <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
             <div class="kpi-info">
               <span class="kpi-title">Monthly Yield (%)</span>
               <span class="kpi-value" id="monthly-roi-display">10.5% / mo</span>
-              <span class="kpi-sub">Target Range: 10% – 22%</span>
+              <span class="kpi-sub">Target Track Record: 10% – 22%</span>
             </div>
           </div>
 
@@ -234,21 +250,12 @@
               <span class="kpi-sub" id="tier-sub">Physical Allocation</span>
             </div>
           </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon"><i class="fa-solid fa-vault"></i></div>
-            <div class="kpi-info">
-              <span class="kpi-title">End Value (12 Months)</span>
-              <span class="kpi-value" id="total-12m-value">$650,880</span>
-              <span class="kpi-sub" id="profit-12m-sub">Profit: $362,880 (126% ROI)</span>
-            </div>
-          </div>
         </div>
 
         <div class="strategy-box">
           <i class="fa-solid fa-circle-info"></i>
           <p id="strategy-desc">
-            With <strong>$288,000</strong> capital at <strong>$100/bbl</strong>, your position controls <strong>2,880 physical barrels</strong>. Capturing <strong>$0.50/day</strong> yields a steady <strong>10.5% monthly return ($30,240/mo)</strong>, accumulating <strong>$362,880 profit</strong> over 12 months.
+            To control <strong>2,880 barrels</strong> worth <strong>$288,000</strong>, a total balance of <strong>$576,000</strong> is required (50% position value + 50% margin buffer). Capturing <strong>$0.50/day</strong> yields <strong>$30,240/mo (10.5% monthly return)</strong> on the position allocation.
           </p>
         </div>
       </div>
@@ -288,12 +295,12 @@
     const priceDisplay = document.getElementById('price-display');
     const swingDisplay = document.getElementById('swing-display');
 
+    const requiredBalanceDisplay = document.getElementById('required-balance-display');
+    const requiredBalanceSub = document.getElementById('required-balance-sub');
     const monthlyRoiDisplay = document.getElementById('monthly-roi-display');
     const monthlyEarningsEl = document.getElementById('monthly-earnings');
     const dailySub = document.getElementById('daily-sub');
     const barrelsCountEl = document.getElementById('barrels-count');
-    const total12mValueEl = document.getElementById('total-12m-value');
-    const profit12mSub = document.getElementById('profit-12m-sub');
     const tierSub = document.getElementById('tier-sub');
     const tierBadgeDisplay = document.getElementById('tier-badge-display');
     const strategyDesc = document.getElementById('strategy-desc');
@@ -427,25 +434,24 @@
 
       // Pure Barrel Calculations
       const barrels = investment / oilPrice;
+      const totalRequiredBalance = investment * 2; // 2x total balance required
       const dailyPayout = barrels * dailySwing;
       const monthlyPayout = dailyPayout * 21; // 21 trading days/mo
       const monthlyRoiPercent = ((monthlyPayout / investment) * 100).toFixed(1);
       
-      const total12MonthValue = drawChart(investment, monthlyPayout);
-      const profit12Month = total12MonthValue - investment;
-      const annualRoiPercent = ((profit12Month / investment) * 100).toFixed(1);
+      const total12MonthValue = drawChart(totalRequiredBalance, monthlyPayout);
+      const profit12Month = total12MonthValue - totalRequiredBalance;
 
       barrelsCountEl.textContent = `${formatNumber(barrels)} Barrels`;
+      requiredBalanceDisplay.textContent = formatCurrency(totalRequiredBalance);
+      requiredBalanceSub.textContent = `50% Barrels (${formatCurrency(investment)}) + 50% Margin Buffer (${formatCurrency(investment)})`;
+
       monthlyRoiDisplay.textContent = `${monthlyRoiPercent}% / mo`;
       monthlyEarningsEl.textContent = formatCurrency(monthlyPayout);
       dailySub.textContent = `${formatCurrency(dailyPayout)}/day (21 days/mo)`;
-      
-      total12mValueEl.textContent = formatCurrency(total12MonthValue);
-      profit12mSub.textContent = `Profit: ${formatCurrency(profit12Month)} (${annualRoiPercent}% ROI)`;
 
       strategyDesc.innerHTML = `
-        With <strong>${formatCurrency(investment)}</strong> capital at <strong>$${oilPrice}/bbl</strong>, your position controls <strong>${formatNumber(barrels)} physical barrels</strong>. 
-        Capturing <strong>$${dailySwing.toFixed(2)}/day</strong> yields a steady <strong>${monthlyRoiPercent}% monthly return (${formatCurrency(monthlyPayout)}/mo)</strong>, accumulating <strong>${formatCurrency(profit12Month)} profit</strong> over 12 months.
+        To control <strong>${formatNumber(barrels)} barrels</strong> worth <strong>${formatCurrency(investment)}</strong> at $${oilPrice}/bbl, you need a total account balance of <strong>${formatCurrency(totalRequiredBalance)}</strong> (half allocated to barrels, half held in margin reserve). Capturing <strong>$${dailySwing.toFixed(2)}/day</strong> generates <strong>${formatCurrency(monthlyPayout)}/month</strong> (${monthlyRoiPercent}% monthly yield on position capital).
       `;
     }
 
