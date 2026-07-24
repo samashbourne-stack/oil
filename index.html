@@ -15,7 +15,6 @@
       --accent-gold: #f59e0b;
       --accent-green: #10b981;
       --accent-blue: #3b82f6;
-      --accent-purple: #8b5cf6;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
       --border-color: #26334d;
@@ -103,7 +102,7 @@
     }
 
     .control-group {
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     .control-label {
@@ -128,10 +127,6 @@
       color: var(--accent-gold);
     }
 
-    .value-display.purple {
-      color: var(--accent-purple);
-    }
-
     input[type="range"] {
       width: 100%;
       height: 6px;
@@ -140,10 +135,6 @@
       outline: none;
       accent-color: var(--accent-gold);
       cursor: pointer;
-    }
-
-    input[type="range"].purple-slider {
-      accent-color: var(--accent-purple);
     }
 
     .range-bounds {
@@ -336,20 +327,11 @@
 
         <div class="control-group">
           <div class="control-label">
-            <label for="timeframe">Investment Horizon (Months)</label>
-            <span class="value-display accent" id="timeframe-display">12 Months</span>
+            <label for="targetRoi">Target ROI (%)</label>
+            <span class="value-display accent" id="roi-display">100%</span>
           </div>
-          <input type="range" id="timeframe" min="1" max="36" step="1" value="12" />
-          <div class="range-bounds"><span>1 Mo</span><span>36 Mos</span></div>
-        </div>
-
-        <div class="control-group">
-          <div class="control-label">
-            <label for="compounding">Monthly Reinvestment (Curvature)</label>
-            <span class="value-display purple" id="compounding-display">25%</span>
-          </div>
-          <input type="range" id="compounding" class="purple-slider" min="0" max="100" step="5" value="25" />
-          <div class="range-bounds"><span>0% (Linear)</span><span>100% (Full Curve)</span></div>
+          <input type="range" id="targetRoi" min="10" max="1000" step="10" value="100" />
+          <div class="range-bounds"><span>10%</span><span>1,000%</span></div>
         </div>
       </div>
 
@@ -364,7 +346,7 @@
             <div class="kpi-info">
               <span class="kpi-title">Daily Cash Flow</span>
               <span class="kpi-value" id="daily-earnings">$882</span>
-              <span class="kpi-sub">Initial daily baseline</span>
+              <span class="kpi-sub">Based on market movement</span>
             </div>
           </div>
 
@@ -387,11 +369,11 @@
           </div>
 
           <div class="kpi-card">
-            <div class="kpi-icon"><i class="fa-solid fa-bullseye"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-vault"></i></div>
             <div class="kpi-info">
-              <span class="kpi-title">End Horizon Balance</span>
-              <span class="kpi-value" id="target-profit">$272,264</span>
-              <span class="kpi-sub" id="total-payout-sub">Profit: $222,264</span>
+              <span class="kpi-title">Total Value (12 Months)</span>
+              <span class="kpi-value" id="total-12m-value">$272,264</span>
+              <span class="kpi-sub" id="profit-12m-sub">Profit: $222,264</span>
             </div>
           </div>
         </div>
@@ -409,7 +391,7 @@
     <div class="panel chart-panel">
       <div class="chart-header-row">
         <div class="panel-header" style="margin: 0;">
-          <h2><i class="fa-solid fa-chart-area"></i> Projected Profit Trajectory</h2>
+          <h2><i class="fa-solid fa-chart-area"></i> 12-Month Projected Growth</h2>
         </div>
 
         <div class="chart-legend">
@@ -438,26 +420,24 @@
     const investmentInput = document.getElementById('investment');
     const oilPriceInput = document.getElementById('oilPrice');
     const dailySwingInput = document.getElementById('dailySwing');
-    const timeframeInput = document.getElementById('timeframe');
-    const compoundingInput = document.getElementById('compounding');
+    const targetRoiInput = document.getElementById('targetRoi');
 
     const invDisplay = document.getElementById('inv-display');
     const priceDisplay = document.getElementById('price-display');
     const swingDisplay = document.getElementById('swing-display');
-    const timeframeDisplay = document.getElementById('timeframe-display');
-    const compoundingDisplay = document.getElementById('compounding-display');
+    const roiDisplay = document.getElementById('roi-display');
 
     const dailyEarningsEl = document.getElementById('daily-earnings');
     const monthlyEarningsEl = document.getElementById('monthly-earnings');
     const barrelsCountEl = document.getElementById('barrels-count');
-    const targetProfitEl = document.getElementById('target-profit');
-    const totalPayoutSub = document.getElementById('total-payout-sub');
+    const total12mValueEl = document.getElementById('total-12m-value');
+    const profit12mSub = document.getElementById('profit-12m-sub');
     const strategyDesc = document.getElementById('strategy-desc');
 
     const canvas = document.getElementById('growthCanvas');
     const ctx = canvas.getContext('2d');
 
-    function drawChart(deposit, monthlyEarnings, monthsCount, compoundingPct) {
+    function drawChart(deposit, monthlyEarnings) {
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
       canvas.width = rect.width * dpr;
@@ -470,19 +450,14 @@
 
       ctx.clearRect(0, 0, width, height);
 
-      // Compute monthly exponential compounding points
-      const values = [deposit];
-      let currentCapital = deposit;
-      const baseMonthlyRoi = (monthlyEarnings / deposit);
-      const reinvestRatio = compoundingPct / 100;
-
-      for (let m = 1; m <= monthsCount; m++) {
-        const monthReturn = currentCapital * baseMonthlyRoi;
-        currentCapital += (monthReturn * reinvestRatio) + (monthReturn * (1 - reinvestRatio));
-        values.push(currentCapital);
+      // Months 0 to 12 calculation
+      const months = ['Deposit', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'];
+      const values = [];
+      for (let i = 0; i <= 12; i++) {
+        values.push(deposit + (monthlyEarnings * i));
       }
 
-      const maxValue = values[values.length - 1] * 1.12; // 12% top padding
+      const maxValue = values[12] * 1.1; // 10% ceiling space
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
 
@@ -505,19 +480,15 @@
         ctx.fillText('$' + (yVal >= 1000000 ? (yVal/1000000).toFixed(1) + 'M' : (yVal / 1000).toFixed(0) + 'k'), padding.left - 10, y + 4);
       }
 
-      // X-Axis Labels (Dynamic spacing depending on horizon)
+      // X-Axis Labels
       ctx.textAlign = 'center';
-      const xStep = chartWidth / monthsCount;
-      const stepInterval = monthsCount > 18 ? 3 : (monthsCount > 10 ? 2 : 1);
+      const xStep = chartWidth / (months.length - 1);
+      months.forEach((m, idx) => {
+        const x = padding.left + idx * xStep;
+        ctx.fillText(m, x, height - 12);
+      });
 
-      for (let m = 0; m <= monthsCount; m++) {
-        if (m === 0 || m === monthsCount || m % stepInterval === 0) {
-          const x = padding.left + m * xStep;
-          ctx.fillText(m === 0 ? 'Start' : `M${m}`, x, height - 12);
-        }
-      }
-
-      // Draw Initial Deposit Line (Dashed Gold Line)
+      // Draw Initial Deposit Line (Dashed Gold)
       const yDeposit = height - padding.bottom - (deposit / maxValue) * chartHeight;
       ctx.strokeStyle = '#f59e0b';
       ctx.lineWidth = 2;
@@ -528,47 +499,37 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Map Points
+      // Point coordinates
       const points = values.map((val, idx) => ({
         x: padding.left + idx * xStep,
         y: height - padding.bottom - (val / maxValue) * chartHeight
       }));
 
-      // Draw Gradient Area Under Curve
+      // Green Fill Under Area
       const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
-      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
-      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.01)');
+      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
 
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.moveTo(points[0].x, height - padding.bottom);
-
-      for (let i = 0; i < points.length - 1; i++) {
-        const xc = (points[i].x + points[i + 1].x) / 2;
-        const yc = (points[i].y + points[i + 1].y) / 2;
-        ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
-      }
-      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+      points.forEach(p => ctx.lineTo(p.x, p.y));
       ctx.lineTo(points[points.length - 1].x, height - padding.bottom);
       ctx.closePath();
       ctx.fill();
 
-      // Draw Smooth Curved Line
+      // Green Line
       ctx.strokeStyle = '#10b981';
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(points[0].x, points[0].y);
-
-      for (let i = 0; i < points.length - 1; i++) {
-        const xc = (points[i].x + points[i + 1].x) / 2;
-        const yc = (points[i].y + points[i + 1].y) / 2;
-        ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
-      }
-      ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+      points.forEach((p, idx) => {
+        if (idx === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
       ctx.stroke();
 
-      // Draw Dots
-      points.forEach((p) => {
+      // Data Points
+      points.forEach(p => {
         ctx.fillStyle = '#10b981';
         ctx.beginPath();
         ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
@@ -579,43 +540,42 @@
         ctx.fill();
       });
 
-      return values[values.length - 1];
+      return values[12]; // Return 12 month total
     }
 
     function updateCalculator() {
       const investment = parseFloat(investmentInput.value);
       const oilPrice = parseFloat(oilPriceInput.value);
       const dailySwing = parseFloat(dailySwingInput.value);
-      const timeframeMonths = parseInt(timeframeInput.value);
-      const compoundingPct = parseFloat(compoundingInput.value);
+      const targetRoi = parseFloat(targetRoiInput.value);
 
       invDisplay.textContent = formatCurrency(investment);
       priceDisplay.textContent = `$${oilPrice}`;
       swingDisplay.textContent = `$${dailySwing.toFixed(2)}`;
-      timeframeDisplay.textContent = `${timeframeMonths} ${timeframeMonths === 1 ? 'Month' : 'Months'}`;
-      compoundingDisplay.textContent = `${compoundingPct}%`;
+      roiDisplay.textContent = `${targetRoi}%`;
 
       const barrels = investment / oilPrice;
       const dailyEarnings = barrels * dailySwing;
-      const monthlyEarnings = dailyEarnings * 21; // ~21 trading days/month
-
-      const finalBalance = drawChart(investment, monthlyEarnings, timeframeMonths, compoundingPct);
-      const totalProfit = finalBalance - investment;
+      const monthlyEarnings = dailyEarnings * 21; // ~21 trading days per month
+      
+      const total12MonthValue = drawChart(investment, monthlyEarnings);
+      const profit12Month = total12MonthValue - investment;
 
       barrelsCountEl.textContent = `${formatNumber(barrels)} bbl`;
       dailyEarningsEl.textContent = formatCurrency(dailyEarnings);
       monthlyEarningsEl.textContent = formatCurrency(monthlyEarnings);
-      targetProfitEl.textContent = formatCurrency(finalBalance);
-      totalPayoutSub.textContent = `Total profit: ${formatCurrency(totalProfit)}`;
+      
+      total12mValueEl.textContent = formatCurrency(total12MonthValue);
+      profit12mSub.textContent = `Profit: ${formatCurrency(profit12Month)}`;
 
       strategyDesc.innerHTML = `
-        With <strong>${formatCurrency(investment)}</strong> capital at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
+        With an investment of <strong>${formatCurrency(investment)}</strong> at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
         A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong> (${formatCurrency(monthlyEarnings)}/mo). 
-        Over <strong>${timeframeMonths} months</strong> with <strong>${compoundingPct}% reinvestment</strong>, your portfolio grows to <strong>${formatCurrency(finalBalance)}</strong>.
+        Total value after 12 months is projected at <strong>${formatCurrency(total12MonthValue)}</strong>.
       `;
     }
 
-    [investmentInput, oilPriceInput, dailySwingInput, timeframeInput, compoundingInput].forEach((input) => {
+    [investmentInput, oilPriceInput, dailySwingInput, targetRoiInput].forEach((input) => {
       input.addEventListener('input', updateCalculator);
       input.addEventListener('change', updateCalculator);
     });
