@@ -327,10 +327,10 @@
 
         <div class="control-group">
           <div class="control-label">
-            <label for="targetRoi">Target ROI (%)</label>
-            <span class="value-display accent" id="roi-display">100%</span>
+            <label for="targetRoi">Target Annual ROI (%)</label>
+            <span class="value-display accent" id="roi-display">444%</span>
           </div>
-          <input type="range" id="targetRoi" min="10" max="1000" step="10" value="100" />
+          <input type="range" id="targetRoi" min="10" max="1000" step="10" value="444" />
           <div class="range-bounds"><span>10%</span><span>1,000%</span></div>
         </div>
       </div>
@@ -450,18 +450,16 @@
 
       ctx.clearRect(0, 0, width, height);
 
-      // Months 0 to 12 calculation
       const months = ['Deposit', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'];
       const values = [];
       for (let i = 0; i <= 12; i++) {
         values.push(deposit + (monthlyEarnings * i));
       }
 
-      const maxValue = values[12] * 1.1; // 10% ceiling space
+      const maxValue = values[12] * 1.1; 
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
 
-      // Draw Grid Lines & Y-Axis Labels
       ctx.strokeStyle = '#26334d';
       ctx.fillStyle = '#9ca3af';
       ctx.font = '11px Inter, sans-serif';
@@ -480,7 +478,6 @@
         ctx.fillText('$' + (yVal >= 1000000 ? (yVal/1000000).toFixed(1) + 'M' : (yVal / 1000).toFixed(0) + 'k'), padding.left - 10, y + 4);
       }
 
-      // X-Axis Labels
       ctx.textAlign = 'center';
       const xStep = chartWidth / (months.length - 1);
       months.forEach((m, idx) => {
@@ -488,7 +485,6 @@
         ctx.fillText(m, x, height - 12);
       });
 
-      // Draw Initial Deposit Line (Dashed Gold)
       const yDeposit = height - padding.bottom - (deposit / maxValue) * chartHeight;
       ctx.strokeStyle = '#f59e0b';
       ctx.lineWidth = 2;
@@ -499,13 +495,11 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Point coordinates
       const points = values.map((val, idx) => ({
         x: padding.left + idx * xStep,
         y: height - padding.bottom - (val / maxValue) * chartHeight
       }));
 
-      // Green Fill Under Area
       const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
       gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
       gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
@@ -518,7 +512,6 @@
       ctx.closePath();
       ctx.fill();
 
-      // Green Line
       ctx.strokeStyle = '#10b981';
       ctx.lineWidth = 3;
       ctx.beginPath();
@@ -528,7 +521,6 @@
       });
       ctx.stroke();
 
-      // Data Points
       points.forEach(p => {
         ctx.fillStyle = '#10b981';
         ctx.beginPath();
@@ -540,10 +532,40 @@
         ctx.fill();
       });
 
-      return values[12]; // Return 12 month total
+      return values[12];
     }
 
-    function updateCalculator() {
+    // Handles synchronization between Target ROI & Daily Swing
+    function syncRoiAndSwing(changedSource) {
+      const investment = parseFloat(investmentInput.value);
+      const oilPrice = parseFloat(oilPriceInput.value);
+      const barrels = investment / oilPrice;
+
+      if (changedSource === 'roi') {
+        const targetRoiPct = parseFloat(targetRoiInput.value);
+        const annualProfitTarget = investment * (targetRoiPct / 100);
+        const monthlyProfitTarget = annualProfitTarget / 12;
+        const dailyProfitTarget = monthlyProfitTarget / 21; // ~21 trading days/mo
+        
+        const calculatedSwing = dailyProfitTarget / barrels;
+        dailySwingInput.value = Math.min(Math.max(calculatedSwing, 0.25), 5.00).toFixed(2);
+      } else {
+        const dailySwing = parseFloat(dailySwingInput.value);
+        const dailyProfit = barrels * dailySwing;
+        const annualProfit = dailyProfit * 21 * 12;
+        const calculatedRoi = (annualProfit / investment) * 100;
+
+        targetRoiInput.value = Math.min(Math.max(calculatedRoi, 10), 1000).toFixed(0);
+      }
+    }
+
+    function updateCalculator(event) {
+      if (event && event.target === targetRoiInput) {
+        syncRoiAndSwing('roi');
+      } else {
+        syncRoiAndSwing('swing');
+      }
+
       const investment = parseFloat(investmentInput.value);
       const oilPrice = parseFloat(oilPriceInput.value);
       const dailySwing = parseFloat(dailySwingInput.value);
@@ -556,7 +578,7 @@
 
       const barrels = investment / oilPrice;
       const dailyEarnings = barrels * dailySwing;
-      const monthlyEarnings = dailyEarnings * 21; // ~21 trading days per month
+      const monthlyEarnings = dailyEarnings * 21;
       
       const total12MonthValue = drawChart(investment, monthlyEarnings);
       const profit12Month = total12MonthValue - investment;
@@ -571,7 +593,7 @@
       strategyDesc.innerHTML = `
         With an investment of <strong>${formatCurrency(investment)}</strong> at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
         A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong> (${formatCurrency(monthlyEarnings)}/mo). 
-        Total value after 12 months is projected at <strong>${formatCurrency(total12MonthValue)}</strong>.
+        Achieving a <strong>${targetRoi}% annual ROI</strong> brings total 12-month value to <strong>${formatCurrency(total12MonthValue)}</strong>.
       `;
     }
 
