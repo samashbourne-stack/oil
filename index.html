@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crude Oil Tactical Yield Calculator</title>
+  <title>Institutional Crude Yield Terminal</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
@@ -20,12 +20,7 @@
       --border-color: #26334d;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
     body {
       background-color: var(--bg-color);
@@ -37,15 +32,9 @@
       padding: 20px;
     }
 
-    .calculator-container {
-      max-width: 1100px;
-      width: 100%;
-    }
+    .calculator-container { max-width: 1100px; width: 100%; }
 
-    .calc-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    .calc-header { text-align: center; margin-bottom: 30px; }
 
     .badge {
       display: inline-flex;
@@ -61,29 +50,11 @@
       margin-bottom: 12px;
     }
 
-    .calc-header h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
+    .calc-header h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 8px; }
+    .calc-header p { color: var(--text-muted); font-size: 0.95rem; }
 
-    .calc-header p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .calc-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 850px) {
-      .calc-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+    @media (max-width: 850px) { .calc-grid { grid-template-columns: 1fr; } }
 
     .panel {
       background-color: var(--panel-bg);
@@ -101,56 +72,34 @@
       color: var(--text-main);
     }
 
-    .control-group {
-      margin-bottom: 22px;
-    }
+    .control-group { margin-bottom: 22px; }
+    .control-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .control-label label { font-size: 0.9rem; color: var(--text-muted); }
 
-    .control-label {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .control-label label {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    .value-display {
-      font-weight: 700;
-      color: #ffffff;
-      font-size: 1rem;
-    }
-
-    .value-display.accent {
-      color: var(--accent-gold);
-    }
+    .value-display { font-weight: 700; color: #ffffff; font-size: 1rem; }
+    .value-display.accent { color: var(--accent-gold); }
 
     input[type="range"] {
-      width: 100%;
-      height: 6px;
-      border-radius: 5px;
-      background: var(--border-color);
-      outline: none;
-      accent-color: var(--accent-gold);
-      cursor: pointer;
+      width: 100%; height: 6px; border-radius: 5px;
+      background: var(--border-color); outline: none;
+      accent-color: var(--accent-gold); cursor: pointer;
     }
 
-    .range-bounds {
-      display: flex;
-      justify-content: space-between;
+    .range-bounds { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Tier Badge Indicator */
+    .tier-badge {
       font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
+    .tier-retail { background: rgba(156, 163, 175, 0.2); color: #d1d5db; }
+    .tier-preferred { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+    .tier-institutional { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.4); }
 
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
 
     .kpi-card {
       background: var(--card-bg);
@@ -166,23 +115,13 @@
       border-color: rgba(16, 185, 129, 0.4);
       background: linear-gradient(135deg, var(--card-bg) 0%, rgba(16, 185, 129, 0.08) 100%);
     }
-
-    .kpi-card.highlight .kpi-value {
-      color: var(--accent-green);
-    }
+    .kpi-card.highlight .kpi-value { color: var(--accent-green); }
 
     .kpi-card.highlight-blue {
       border-color: rgba(59, 130, 246, 0.4);
       background: linear-gradient(135deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.08) 100%);
     }
-
-    .kpi-card.highlight-blue .kpi-value {
-      color: var(--accent-blue);
-    }
-
-    .kpi-card.highlight-blue .kpi-icon {
-      color: var(--accent-blue);
-    }
+    .kpi-card.highlight-blue .kpi-value { color: var(--accent-blue); }
 
     .kpi-icon {
       background: rgba(255, 255, 255, 0.05);
@@ -192,27 +131,10 @@
       font-size: 1.1rem;
     }
 
-    .kpi-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .kpi-title {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .kpi-value {
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-
-    .kpi-sub {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .kpi-info { display: flex; flex-direction: column; }
+    .kpi-title { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
+    .kpi-value { font-size: 1.3rem; font-weight: 700; }
+    .kpi-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
 
     .strategy-box {
       background: rgba(245, 158, 11, 0.05);
@@ -223,73 +145,27 @@
       gap: 12px;
       align-items: flex-start;
     }
+    .strategy-box i { color: var(--accent-gold); margin-top: 3px; }
+    .strategy-box p { font-size: 0.88rem; line-height: 1.4; color: var(--text-main); }
 
-    .strategy-box i {
-      color: var(--accent-gold);
-      margin-top: 3px;
-    }
-
-    .strategy-box p {
-      font-size: 0.88rem;
-      line-height: 1.4;
-      color: var(--text-main);
-    }
-
-    /* Chart Section */
-    .chart-panel {
-      margin-top: 24px;
-    }
-
-    .chart-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .chart-legend {
-      display: flex;
-      gap: 20px;
-      font-size: 0.85rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--text-muted);
-    }
-
-    .legend-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
-    }
-
+    .chart-panel { margin-top: 24px; }
+    .chart-header-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .chart-legend { display: flex; gap: 20px; font-size: 0.85rem; }
+    .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
+    .legend-color { width: 12px; height: 12px; border-radius: 3px; }
     .legend-deposit { background-color: var(--accent-gold); }
     .legend-growth { background-color: var(--accent-green); }
 
-    .chart-wrapper {
-      position: relative;
-      width: 100%;
-      height: 320px;
-    }
-
-    canvas#growthCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+    .chart-wrapper { position: relative; width: 100%; height: 320px; }
+    canvas#growthCanvas { width: 100%; height: 100%; display: block; }
   </style>
 </head>
 <body>
   <div class="calculator-container">
     <header class="calc-header">
-      <div class="badge"><i class="fa-solid fa-oil-well"></i> Crude Oil Yield Terminal</div>
+      <div class="badge"><i class="fa-solid fa-oil-well"></i> Institutional Crude Terminal</div>
       <h1>Tactical Investment Calculator</h1>
-      <p>Project your daily cash flow and target returns based on physical barrel leverage and daily market movement.</p>
+      <p>Project risk-adjusted cash flows based on physical barrel leverage, carrying costs, and market efficiency.</p>
     </header>
 
     <div class="calc-grid">
@@ -301,60 +177,61 @@
         <div class="control-group">
           <div class="control-label">
             <label for="investment">Capital Investment</label>
-            <span class="value-display" id="inv-display">$50,000</span>
+            <span class="value-display" id="inv-display">$288,000</span>
           </div>
-          <input type="range" id="investment" min="1000" max="1000000" step="1000" value="50000" />
-          <div class="range-bounds"><span>$1,000</span><span>$1,000,000</span></div>
+          <input type="range" id="investment" min="10000" max="1000000" step="5000" value="288000" />
+          <div class="range-bounds"><span>$10,000</span><span>$1,000,000</span></div>
         </div>
 
         <div class="control-group">
           <div class="control-label">
             <label for="oilPrice">Benchmark Oil Price ($/bbl)</label>
-            <span class="value-display" id="price-display">$85</span>
+            <span class="value-display" id="price-display">$100</span>
           </div>
-          <input type="range" id="oilPrice" min="80" max="120" step="1" value="85" />
+          <input type="range" id="oilPrice" min="80" max="120" step="1" value="100" />
           <div class="range-bounds"><span>$80/bbl</span><span>$120/bbl</span></div>
         </div>
 
         <div class="control-group">
           <div class="control-label">
-            <label for="dailySwing">Daily Market Swing ($/bbl)</label>
-            <span class="value-display" id="swing-display">$1.50</span>
+            <label for="dailySwing">Target Daily Swing ($/bbl)</label>
+            <span class="value-display" id="swing-display">$1.00</span>
           </div>
-          <input type="range" id="dailySwing" min="0.25" max="5.00" step="0.25" value="1.50" />
+          <input type="range" id="dailySwing" min="0.25" max="5.00" step="0.25" value="1.00" />
           <div class="range-bounds"><span>$0.25</span><span>$5.00</span></div>
         </div>
 
         <div class="control-group">
           <div class="control-label">
-            <label for="targetRoi">Target Annual ROI (%)</label>
-            <span class="value-display accent" id="roi-display">444%</span>
+            <label for="winRate">Market Capture / Win Rate (%)</label>
+            <span class="value-display accent" id="winrate-display">60%</span>
           </div>
-          <input type="range" id="targetRoi" min="10" max="1000" step="10" value="444" />
-          <div class="range-bounds"><span>10%</span><span>1,000%</span></div>
+          <input type="range" id="winRate" min="50" max="80" step="1" value="60" />
+          <div class="range-bounds"><span>50% (Conservative)</span><span>80% (Aggressive)</span></div>
         </div>
       </div>
 
       <div class="panel output-panel">
-        <div class="panel-header">
+        <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
           <h2><i class="fa-solid fa-chart-line"></i> Projected Returns</h2>
+          <span class="tier-badge tier-institutional" id="tier-badge-display">Institutional Tier</span>
         </div>
 
         <div class="kpi-grid">
           <div class="kpi-card highlight">
             <div class="kpi-icon"><i class="fa-solid fa-wallet"></i></div>
             <div class="kpi-info">
-              <span class="kpi-title">Daily Cash Flow</span>
-              <span class="kpi-value" id="daily-earnings">$882</span>
-              <span class="kpi-sub">Based on market movement</span>
+              <span class="kpi-title">Net Daily Cash Flow</span>
+              <span class="kpi-value" id="daily-earnings">$576</span>
+              <span class="kpi-sub" id="winrate-sub">60% Net capture efficiency</span>
             </div>
           </div>
 
           <div class="kpi-card highlight-blue">
             <div class="kpi-icon"><i class="fa-solid fa-calendar-days"></i></div>
             <div class="kpi-info">
-              <span class="kpi-title">Monthly Cash Flow</span>
-              <span class="kpi-value" id="monthly-earnings">$18,522</span>
+              <span class="kpi-title">Net Monthly Cash Flow</span>
+              <span class="kpi-value" id="monthly-earnings">$12,096</span>
               <span class="kpi-sub">~21 trading days/month</span>
             </div>
           </div>
@@ -363,8 +240,8 @@
             <div class="kpi-icon"><i class="fa-solid fa-barrel-oil"></i></div>
             <div class="kpi-info">
               <span class="kpi-title">Barrels Controlled</span>
-              <span class="kpi-value" id="barrels-count">588 bbl</span>
-              <span class="kpi-sub">Physical volume allocation</span>
+              <span class="kpi-value" id="barrels-count">2,880 bbl</span>
+              <span class="kpi-sub" id="fee-sub">Low Tier Fees: $2/bbl</span>
             </div>
           </div>
 
@@ -372,8 +249,8 @@
             <div class="kpi-icon"><i class="fa-solid fa-vault"></i></div>
             <div class="kpi-info">
               <span class="kpi-title">Total Value (12 Months)</span>
-              <span class="kpi-value" id="total-12m-value">$272,264</span>
-              <span class="kpi-sub" id="profit-12m-sub">Profit: $222,264</span>
+              <span class="kpi-value" id="total-12m-value">$433,152</span>
+              <span class="kpi-sub" id="profit-12m-sub">Net Profit: $145,152 (50.4% ROI)</span>
             </div>
           </div>
         </div>
@@ -381,7 +258,7 @@
         <div class="strategy-box">
           <i class="fa-solid fa-circle-info"></i>
           <p id="strategy-desc">
-            With an investment of <strong>$50,000</strong> at <strong>$85/bbl</strong>, you control <strong>588 barrels</strong>. A <strong>$1.50</strong> daily movement yields <strong>$882/day</strong>.
+            With <strong>$288,000</strong> capital at <strong>$100/bbl</strong>, you control <strong>2,880 barrels</strong> at <strong>Institutional Tier rates</strong>. Accounting for a <strong>60% capture rate</strong>, your net profit after 12 months is projected at <strong>$145,152 (50.4% ROI)</strong>.
           </p>
         </div>
       </div>
@@ -395,12 +272,8 @@
         </div>
 
         <div class="chart-legend">
-          <div class="legend-item">
-            <div class="legend-color legend-deposit"></div> Initial Deposit
-          </div>
-          <div class="legend-item">
-            <div class="legend-color legend-growth"></div> Total Portfolio Value
-          </div>
+          <div class="legend-item"><div class="legend-color legend-deposit"></div> Initial Deposit</div>
+          <div class="legend-item"><div class="legend-color legend-growth"></div> Total Portfolio Value</div>
         </div>
       </div>
 
@@ -420,18 +293,21 @@
     const investmentInput = document.getElementById('investment');
     const oilPriceInput = document.getElementById('oilPrice');
     const dailySwingInput = document.getElementById('dailySwing');
-    const targetRoiInput = document.getElementById('targetRoi');
+    const winRateInput = document.getElementById('winRate');
 
     const invDisplay = document.getElementById('inv-display');
     const priceDisplay = document.getElementById('price-display');
     const swingDisplay = document.getElementById('swing-display');
-    const roiDisplay = document.getElementById('roi-display');
+    const winrateDisplay = document.getElementById('winrate-display');
 
     const dailyEarningsEl = document.getElementById('daily-earnings');
     const monthlyEarningsEl = document.getElementById('monthly-earnings');
     const barrelsCountEl = document.getElementById('barrels-count');
     const total12mValueEl = document.getElementById('total-12m-value');
     const profit12mSub = document.getElementById('profit-12m-sub');
+    const winrateSub = document.getElementById('winrate-sub');
+    const feeSub = document.getElementById('fee-sub');
+    const tierBadgeDisplay = document.getElementById('tier-badge-display');
     const strategyDesc = document.getElementById('strategy-desc');
 
     const canvas = document.getElementById('growthCanvas');
@@ -456,7 +332,7 @@
         values.push(deposit + (monthlyEarnings * i));
       }
 
-      const maxValue = values[12] * 1.1; 
+      const maxValue = values[12] * 1.1;
       const chartWidth = width - padding.left - padding.right;
       const chartHeight = height - padding.top - padding.bottom;
 
@@ -469,12 +345,10 @@
       for (let i = 0; i <= gridRows; i++) {
         const yVal = (maxValue / gridRows) * i;
         const y = height - padding.bottom - (i / gridRows) * chartHeight;
-
         ctx.beginPath();
         ctx.moveTo(padding.left, y);
         ctx.lineTo(width - padding.right, y);
         ctx.stroke();
-
         ctx.fillText('$' + (yVal >= 1000000 ? (yVal/1000000).toFixed(1) + 'M' : (yVal / 1000).toFixed(0) + 'k'), padding.left - 10, y + 4);
       }
 
@@ -535,69 +409,68 @@
       return values[12];
     }
 
-    // Handles synchronization between Target ROI & Daily Swing
-    function syncRoiAndSwing(changedSource) {
-      const investment = parseFloat(investmentInput.value);
-      const oilPrice = parseFloat(oilPriceInput.value);
-      const barrels = investment / oilPrice;
-
-      if (changedSource === 'roi') {
-        const targetRoiPct = parseFloat(targetRoiInput.value);
-        const annualProfitTarget = investment * (targetRoiPct / 100);
-        const monthlyProfitTarget = annualProfitTarget / 12;
-        const dailyProfitTarget = monthlyProfitTarget / 21; // ~21 trading days/mo
-        
-        const calculatedSwing = dailyProfitTarget / barrels;
-        dailySwingInput.value = Math.min(Math.max(calculatedSwing, 0.25), 5.00).toFixed(2);
-      } else {
-        const dailySwing = parseFloat(dailySwingInput.value);
-        const dailyProfit = barrels * dailySwing;
-        const annualProfit = dailyProfit * 21 * 12;
-        const calculatedRoi = (annualProfit / investment) * 100;
-
-        targetRoiInput.value = Math.min(Math.max(calculatedRoi, 10), 1000).toFixed(0);
-      }
-    }
-
-    function updateCalculator(event) {
-      if (event && event.target === targetRoiInput) {
-        syncRoiAndSwing('roi');
-      } else {
-        syncRoiAndSwing('swing');
-      }
-
+    function updateCalculator() {
       const investment = parseFloat(investmentInput.value);
       const oilPrice = parseFloat(oilPriceInput.value);
       const dailySwing = parseFloat(dailySwingInput.value);
-      const targetRoi = parseFloat(targetRoiInput.value);
+      const winRate = parseFloat(winRateInput.value);
 
       invDisplay.textContent = formatCurrency(investment);
       priceDisplay.textContent = `$${oilPrice}`;
       swingDisplay.textContent = `$${dailySwing.toFixed(2)}`;
-      roiDisplay.textContent = `${targetRoi}%`;
+      winrateDisplay.textContent = `${winRate}%`;
+
+      // Determine Tiering based on Capital Investment
+      let carryingFeePerBbl = 12; // Standard Retail drag
+      let tierName = "Standard Tier";
+      let tierClass = "tier-retail";
+
+      if (investment >= 250000) {
+        carryingFeePerBbl = 2; // VIP Institutional Rate
+        tierName = "Institutional Tier";
+        tierClass = "tier-institutional";
+      } else if (investment >= 50000) {
+        carryingFeePerBbl = 6; // Preferred Rate
+        tierName = "Preferred Tier";
+        tierClass = "tier-preferred";
+      }
+
+      tierBadgeDisplay.textContent = tierName;
+      tierBadgeDisplay.className = `tier-badge ${tierClass}`;
+      feeSub.textContent = `Carrying Fee: $${carryingFeePerBbl}/bbl`;
 
       const barrels = investment / oilPrice;
-      const dailyEarnings = barrels * dailySwing;
-      const monthlyEarnings = dailyEarnings * 21;
       
-      const total12MonthValue = drawChart(investment, monthlyEarnings);
+      // Calculate Net Market Efficiency Factor (Win Rate - Loss Rate)
+      const lossRate = 100 - winRate;
+      const netEfficiency = (winRate - lossRate) / 100; // e.g., 60% win - 40% loss = 20% net capture
+      
+      // Daily Gross Earnings adjusted for Win Rate and Fee Drag
+      const rawDailyProfit = (barrels * dailySwing) * netEfficiency;
+      const dailyCarryingCost = (barrels * carryingFeePerBbl) / 252; // spread over annual trading days
+      const netDailyEarnings = Math.max(rawDailyProfit - dailyCarryingCost, 0);
+
+      const netMonthlyEarnings = netDailyEarnings * 21; // ~21 trading days/mo
+      
+      const total12MonthValue = drawChart(investment, netMonthlyEarnings);
       const profit12Month = total12MonthValue - investment;
+      const roiPercent = ((profit12Month / investment) * 100).toFixed(1);
 
       barrelsCountEl.textContent = `${formatNumber(barrels)} bbl`;
-      dailyEarningsEl.textContent = formatCurrency(dailyEarnings);
-      monthlyEarningsEl.textContent = formatCurrency(monthlyEarnings);
+      dailyEarningsEl.textContent = formatCurrency(netDailyEarnings);
+      monthlyEarningsEl.textContent = formatCurrency(netMonthlyEarnings);
+      winrateSub.textContent = `${winRate}% net capture efficiency`;
       
       total12mValueEl.textContent = formatCurrency(total12MonthValue);
-      profit12mSub.textContent = `Profit: ${formatCurrency(profit12Month)}`;
+      profit12mSub.textContent = `Net Profit: ${formatCurrency(profit12Month)} (${roiPercent}% ROI)`;
 
       strategyDesc.innerHTML = `
-        With an investment of <strong>${formatCurrency(investment)}</strong> at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
-        A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong> (${formatCurrency(monthlyEarnings)}/mo). 
-        Achieving a <strong>${targetRoi}% annual ROI</strong> brings total 12-month value to <strong>${formatCurrency(total12MonthValue)}</strong>.
+        With <strong>${formatCurrency(investment)}</strong> capital at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong> at <strong>${tierName} rates</strong>. 
+        Factoring in a realistic <strong>${winRate}% win rate</strong>, your net 12-month return is projected at <strong>${formatCurrency(profit12Month)} (${roiPercent}% ROI)</strong>.
       `;
     }
 
-    [investmentInput, oilPriceInput, dailySwingInput, targetRoiInput].forEach((input) => {
+    [investmentInput, oilPriceInput, dailySwingInput, winRateInput].forEach((input) => {
       input.addEventListener('input', updateCalculator);
       input.addEventListener('change', updateCalculator);
     });
