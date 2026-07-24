@@ -14,6 +14,7 @@
       --card-bg: #1a2436;
       --accent-gold: #f59e0b;
       --accent-green: #10b981;
+      --accent-blue: #3b82f6;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
       --border-color: #26334d;
@@ -75,6 +76,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
+      margin-bottom: 24px;
     }
 
     @media (max-width: 850px) {
@@ -169,6 +171,19 @@
       color: var(--accent-green);
     }
 
+    .kpi-card.highlight-blue {
+      border-color: rgba(59, 130, 246, 0.4);
+      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.08) 100%);
+    }
+
+    .kpi-card.highlight-blue .kpi-value {
+      color: var(--accent-blue);
+    }
+
+    .kpi-card.highlight-blue .kpi-icon {
+      color: var(--accent-blue);
+    }
+
     .kpi-icon {
       background: rgba(255, 255, 255, 0.05);
       padding: 10px;
@@ -218,6 +233,46 @@
       font-size: 0.88rem;
       line-height: 1.4;
       color: var(--text-main);
+    }
+
+    /* Chart Section */
+    .chart-panel {
+      margin-top: 24px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-deposit { background-color: var(--accent-gold); }
+    .legend-growth { background-color: var(--accent-green); }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    canvas#growthCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
   </style>
 </head>
@@ -287,6 +342,15 @@
             </div>
           </div>
 
+          <div class="kpi-card highlight-blue">
+            <div class="kpi-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="kpi-info">
+              <span class="kpi-title">Monthly Cash Flow</span>
+              <span class="kpi-value" id="monthly-earnings">$18,522</span>
+              <span class="kpi-sub">~21 trading days/month</span>
+            </div>
+          </div>
+
           <div class="kpi-card">
             <div class="kpi-icon"><i class="fa-solid fa-barrel-oil"></i></div>
             <div class="kpi-info">
@@ -304,15 +368,6 @@
               <span class="kpi-sub" id="total-payout-sub">Total payout: $100,000</span>
             </div>
           </div>
-
-          <div class="kpi-card">
-            <div class="kpi-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
-            <div class="kpi-info">
-              <span class="kpi-title">Est. Days to Target ROI</span>
-              <span class="kpi-value" id="days-needed">57 days</span>
-              <span class="kpi-sub">Trading session projection</span>
-            </div>
-          </div>
         </div>
 
         <div class="strategy-box">
@@ -321,6 +376,26 @@
             With an investment of <strong>$50,000</strong> at <strong>$85/bbl</strong>, you control <strong>588 barrels</strong>. A <strong>$1.50</strong> daily movement yields <strong>$882/day</strong>.
           </p>
         </div>
+      </div>
+    </div>
+
+    <!-- Graph Panel -->
+    <div class="panel chart-panel">
+      <div class="panel-header">
+        <h2><i class="fa-solid fa-chart-area"></i> 1 to 12-Month Profit Trajectory</h2>
+      </div>
+      
+      <div class="chart-legend">
+        <div class="legend-item">
+          <div class="legend-color legend-deposit"></div> Initial Deposit
+        </div>
+        <div class="legend-item">
+          <div class="legend-color legend-growth"></div> Total Value (Deposit + Profit)
+        </div>
+      </div>
+
+      <div class="chart-wrapper">
+        <canvas id="growthCanvas"></canvas>
       </div>
     </div>
   </div>
@@ -343,11 +418,125 @@
     const roiDisplay = document.getElementById('roi-display');
 
     const dailyEarningsEl = document.getElementById('daily-earnings');
+    const monthlyEarningsEl = document.getElementById('monthly-earnings');
     const barrelsCountEl = document.getElementById('barrels-count');
     const targetProfitEl = document.getElementById('target-profit');
-    const daysNeededEl = document.getElementById('days-needed');
     const totalPayoutSub = document.getElementById('total-payout-sub');
     const strategyDesc = document.getElementById('strategy-desc');
+
+    const canvas = document.getElementById('growthCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawChart(deposit, monthlyProfit) {
+      // Handle high DPI crisp canvas drawing
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+      const padding = { top: 20, right: 30, bottom: 40, left: 65 };
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Data setup (Months 0 to 12)
+      const months = ['Start', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10', 'M11', 'M12'];
+      const values = [];
+      for (let i = 0; i <= 12; i++) {
+        values.push(deposit + (monthlyProfit * i));
+      }
+
+      const maxValue = values[12] * 1.1; // 10% ceiling headroom
+      const chartWidth = width - padding.left - padding.right;
+      const chartHeight = height - padding.top - padding.bottom;
+
+      // Draw Grid Lines & Y-Axis Labels
+      ctx.strokeStyle = '#26334d';
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '11px Inter, sans-serif';
+      ctx.textAlign = 'right';
+
+      const gridRows = 4;
+      for (let i = 0; i <= gridRows; i++) {
+        const yVal = (maxValue / gridRows) * i;
+        const y = height - padding.bottom - (i / gridRows) * chartHeight;
+
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+
+        ctx.fillText('$' + (yVal / 1000).toFixed(0) + 'k', padding.left - 10, y + 4);
+      }
+
+      // X-Axis Labels
+      ctx.textAlign = 'center';
+      const xStep = chartWidth / (months.length - 1);
+      months.forEach((m, idx) => {
+        const x = padding.left + idx * xStep;
+        ctx.fillText(m, x, height - 12);
+      });
+
+      // Draw Initial Deposit Line (Dashed Gold Line)
+      const yDeposit = height - padding.bottom - (deposit / maxValue) * chartHeight;
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(padding.left, yDeposit);
+      ctx.lineTo(width - padding.right, yDeposit);
+      ctx.stroke();
+      ctx.setLineDash([]); // reset line dash
+
+      // Draw Total Growth Area (Green Fill)
+      const gradient = ctx.createLinearGradient(0, padding.top, 0, height - padding.bottom);
+      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, height - padding.bottom);
+
+      values.forEach((val, idx) => {
+        const x = padding.left + idx * xStep;
+        const y = height - padding.bottom - (val / maxValue) * chartHeight;
+        ctx.lineTo(x, y);
+      });
+
+      ctx.lineTo(padding.left + (values.length - 1) * xStep, height - padding.bottom);
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw Total Growth Line (Green Solid)
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      values.forEach((val, idx) => {
+        const x = padding.left + idx * xStep;
+        const y = height - padding.bottom - (val / maxValue) * chartHeight;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Draw Data Dots on Green Line
+      values.forEach((val, idx) => {
+        const x = padding.left + idx * xStep;
+        const y = height - padding.bottom - (val / maxValue) * chartHeight;
+
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#131b2a';
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
 
     function updateCalculator() {
       const investment = parseFloat(investmentInput.value);
@@ -362,20 +551,22 @@
 
       const barrels = investment / oilPrice;
       const dailyEarnings = barrels * dailySwing;
+      const monthlyEarnings = dailyEarnings * 21; // ~21 trading days per month
       const targetProfit = investment * (targetRoi / 100);
       const totalPayout = investment + targetProfit;
-      const daysNeeded = Math.ceil(targetProfit / dailyEarnings);
 
       barrelsCountEl.textContent = `${formatNumber(barrels)} bbl`;
       dailyEarningsEl.textContent = formatCurrency(dailyEarnings);
+      monthlyEarningsEl.textContent = formatCurrency(monthlyEarnings);
       targetProfitEl.textContent = formatCurrency(targetProfit);
       totalPayoutSub.textContent = `Total payout: ${formatCurrency(totalPayout)}`;
-      daysNeededEl.textContent = `${formatNumber(daysNeeded)} days`;
 
       strategyDesc.innerHTML = `
         With an investment of <strong>${formatCurrency(investment)}</strong> at <strong>$${oilPrice}/bbl</strong>, you control <strong>${formatNumber(barrels)} barrels</strong>. 
-        A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong>.
+        A <strong>$${dailySwing.toFixed(2)}</strong> daily movement yields <strong>${formatCurrency(dailyEarnings)}/day</strong> (${formatCurrency(monthlyEarnings)}/mo).
       `;
+
+      drawChart(investment, monthlyEarnings);
     }
 
     [investmentInput, oilPriceInput, dailySwingInput, targetRoiInput].forEach((input) => {
@@ -383,6 +574,7 @@
       input.addEventListener('change', updateCalculator);
     });
 
+    window.addEventListener('resize', updateCalculator);
     window.addEventListener('DOMContentLoaded', updateCalculator);
     updateCalculator();
   </script>
