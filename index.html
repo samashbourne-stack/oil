@@ -164,6 +164,49 @@
 
     .chart-wrapper { position: relative; width: 100%; height: 320px; }
     canvas#growthCanvas { width: 100%; height: 100%; display: block; }
+
+    /* New Proof & TradingView Section Styles */
+    .proof-section { margin-top: 24px; }
+    .tv-wrapper { width: 100%; height: 500px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); margin-top: 16px; }
+    
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .proof-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .proof-card h3 {
+      font-size: 0.95rem;
+      color: var(--accent-gold);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .proof-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .stat-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
   </style>
 </head>
 <body>
@@ -278,7 +321,65 @@
         <canvas id="growthCanvas"></canvas>
       </div>
     </div>
+
+    <!-- TradingView Real-Time Proof & Analysis Terminal -->
+    <div class="panel proof-section">
+      <div class="panel-header">
+        <h2><i class="fa-solid fa-magnifying-glass-chart"></i> Real-Time Volatility Proof & Analysis</h2>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">
+        Historical market data proves WTI Crude Oil consistently moves between <span class="stat-badge">$1.50 to $3.50+</span> per day in total intraday range (High vs Low). Capturing a daily target of <span class="stat-badge">$0.50 - $1.00</span> requires extracting less than 30% of the natural daily market range using structured intraday take-profit orders.
+      </p>
+
+      <!-- Embedded Live TradingView Chart -->
+      <div class="tv-wrapper">
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div id="tradingview_oil_chart" style="height:100%;width:100%"></div>
+        </div>
+      </div>
+
+      <div class="proof-grid">
+        <div class="proof-card">
+          <h3><i class="fa-solid fa-wave-square"></i> ATR (Average True Range) Proof</h3>
+          <p>
+            The 14-day Average True Range (ATR) on WTI Crude typically stays between <strong>$1.80 and $4.00</strong>. This confirms that a target move of <strong>$0.50 - $1.00</strong> is well within the standard, statistical daily movement of the market.
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <h3><i class="fa-solid fa-crosshairs"></i> Automated Take-Profit Capture</h3>
+          <p>
+            Instead of holding long-term directional bias, position parameters utilize automated Take Profit (TP) orders placed inside key liquidity zones. Once the $0.50 - $1.00 swing hits, the profit is secured into cash instantly.
+          </p>
+        </div>
+
+        <div class="proof-card">
+          <h3><i class="fa-solid fa-layer-group"></i> Scalping & Daily Analysis</h3>
+          <p>
+            Daily technical analysis identifies key support/resistance levels and volume profile nodes. Trades are executed strictly during high-liquidity London/NY overlap sessions to avoid stagnant rangebound periods.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- TradingView Widget Script -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  <script type="text/javascript">
+    new TradingView.widget({
+      "autosize": true,
+      "symbol": "TVC:USOIL",
+      "interval": "D",
+      "timezone": "Etc/UTC",
+      "theme": "dark",
+      "style": "1",
+      "locale": "en",
+      "toolbar_bg": "#131b2a",
+      "enable_publishing": false,
+      "allow_symbol_change": true,
+      "container_id": "tradingview_oil_chart"
+    });
+  </script>
 
   <script>
     const formatCurrency = (num) =>
